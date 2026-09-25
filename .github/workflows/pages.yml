@@ -33,9 +33,28 @@ jobs:
       - name: Build for repository Pages path
         run: npm run build -- --base=/God-s-Eye-View-La-Guajira-/
 
+      - name: Normalize Cesium output for GitHub Pages
+        run: |
+          NESTED="dist/God-s-Eye-View-La-Guajira-/cesium"
+          if [ -d "$NESTED" ]; then
+            rm -rf dist/cesium
+            mv "$NESTED" dist/cesium
+            rmdir dist/God-s-Eye-View-La-Guajira- || true
+          fi
+
+      - name: Validate static build
+        run: |
+          test -f dist/index.html
+          test -f dist/logo.svg
+          test -f dist/cesium/Cesium.js
+          test -d dist/assets
+          grep -q '/God-s-Eye-View-La-Guajira-/assets/' dist/index.html
+          grep -q '/God-s-Eye-View-La-Guajira-/cesium/Cesium.js' dist/index.html
+
       - name: Stage clean static site outside the repository
         run: |
           touch dist/.nojekyll
+          cp dist/index.html dist/404.html
           rm -rf /tmp/gev-pages
           mkdir -p /tmp/gev-pages
           cp -R dist/. /tmp/gev-pages/

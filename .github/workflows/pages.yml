@@ -1,4 +1,4 @@
-name: Build GitHub Pages site
+name: Deploy GitHub Pages
 
 on:
   push:
@@ -6,17 +6,18 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: gh-pages
+  group: pages
   cancel-in-progress: true
 
 jobs:
-  build-and-publish:
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -30,10 +31,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build for repository Pages path
+      - name: Build for GitHub Pages
         run: npm run build -- --base=/God-s-Eye-View-La-Guajira-/
 
-      - name: Normalize Cesium output for GitHub Pages
+      - name: Normalize Cesium output
         run: |
           NESTED="dist/God-s-Eye-View-La-Guajira-/cesium"
           if [ -d "$NESTED" ]; then
@@ -41,6 +42,8 @@ jobs:
             mv "$NESTED" dist/cesium
             rmdir dist/God-s-Eye-View-La-Guajira- || true
           fi
+          touch dist/.nojekyll
+          cp dist/index.html dist/404.html
 
       - name: Validate static build
         run: |
@@ -51,22 +54,21 @@ jobs:
           grep -q '/God-s-Eye-View-La-Guajira-/assets/' dist/index.html
           grep -q '/God-s-Eye-View-La-Guajira-/cesium/Cesium.js' dist/index.html
 
-      - name: Stage clean static site outside the repository
-        run: |
-          touch dist/.nojekyll
-          cp dist/index.html dist/404.html
-          rm -rf /tmp/gev-pages
-          mkdir -p /tmp/gev-pages
-          cp -R dist/. /tmp/gev-pages/
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
 
-      - name: Publish only static build to gh-pages
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout --orphan pages-deploy
-          git rm -rf . || true
-          git clean -fdx
-          cp -R /tmp/gev-pages/. .
-          git add -A
-          git commit -m "Deploy GitHub Pages site"
-          git push --force origin HEAD:gh-pages
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

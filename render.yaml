@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: ojo-de-dios-la-guajira
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: npm ci
+    startCommand: npm run dev
+    autoDeployTrigger: commit
+    healthCheckPath: /
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: OPENSKY_AUTH_MODE
+        value: anon
+      - key: GEV_RATELIMIT_OPENAI_PER_MIN
+        value: "30"
+      - key: GEV_RATELIMIT_GOOGLE_PER_MIN
+        value: "60"
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false
+      - key: GOOGLE_MAPS_SERVER_API_KEY
+        sync: false
+      - key: CESIUM_ION_TOKEN
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: AISSTREAM_API_KEY
+        sync: false
+      - key: FIRMS_MAP_KEY
+        sync: false
+      - key: TOMTOM_API_KEY
+        sync: false
+      - key: OPENSKY_CLIENT_ID
+        sync: false
+      - key: OPENSKY_CLIENT_SECRET
+        sync: false

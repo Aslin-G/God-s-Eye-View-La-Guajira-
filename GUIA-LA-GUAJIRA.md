@@ -10,7 +10,10 @@ proyecto de código abierto
   (versión `0.1.1`), con las etiquetas `v0.1.0` y `v0.1.1`.
 - **Estado:** el código es el original, sin cambios funcionales. Solo se
   cambiaron los datos del repositorio (`package.json`, `CODEOWNERS`, enlaces
-  de issues) y se agregaron `.nvmrc` y esta guía.
+  de issues) y se agregaron `.nvmrc`, el kit de instalación `kit-local/` y
+  las guías.
+- **Para trabajar en tu computador**, paso a paso, consulta
+  [GUIA-TRABAJO-LOCAL.md](GUIA-TRABAJO-LOCAL.md).
 
 ---
 

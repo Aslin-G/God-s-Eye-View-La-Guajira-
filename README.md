@@ -1,3 +1,10 @@
+> [!NOTE]
+> **Copia para La Guajira.** Este repositorio es una copia de
+> [bilawalsidhu/gods-eye-view](https://github.com/bilawalsidhu/gods-eye-view)
+> (MIT) que servirá de base para un visor de redes eléctricas en La Guajira,
+> Colombia. La guía en español para instalarlo, configurarlo y adaptarlo está en
+> **[GUIA-LA-GUAJIRA.md](GUIA-LA-GUAJIRA.md)**.
+
 <div align="center">
 
 # 🌐 God's Eye View

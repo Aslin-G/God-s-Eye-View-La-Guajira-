@@ -33,17 +33,20 @@ jobs:
       - name: Build for repository Pages path
         run: npm run build -- --base=/God-s-Eye-View-La-Guajira-/
 
-      - name: Prepare static site
+      - name: Stage clean static site outside the repository
         run: |
           touch dist/.nojekyll
-          cp -R dist /tmp/gev-pages
+          rm -rf /tmp/gev-pages
+          mkdir -p /tmp/gev-pages
+          cp -R dist/. /tmp/gev-pages/
 
-      - name: Publish dist to gh-pages branch
+      - name: Publish only static build to gh-pages
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout --orphan pages-deploy
-          git rm -rf .
+          git rm -rf . || true
+          git clean -fdx
           cp -R /tmp/gev-pages/. .
           git add -A
           git commit -m "Deploy GitHub Pages site"
